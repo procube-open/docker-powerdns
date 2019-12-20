@@ -1,6 +1,6 @@
 FROM alpine:latest AS builder
 
-ENV powerdns_version 4.2.0
+ENV powerdns_version 4.2.1
 
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
 RUN apk add --no-cache --virtual .build-deps \
