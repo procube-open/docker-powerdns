@@ -1,18 +1,18 @@
 FROM alpine:latest AS builder
 
-ENV powerdns_version 4.2.1
+ENV BUILDER_VERSION 4.2.1
 
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
 RUN apk add --no-cache --virtual .build-deps \
   g++ make mariadb-dev postgresql-dev sqlite-dev curl boost-dev autoconf automake libtool curl-dev file \
   bison flex ragel yaml-cpp yaml-cpp-dev openldap-dev krb5-dev lua-dev unixodbc-dev git py-virtualenv
 # Download sources
-RUN curl -L -o /tmp/powerdns.tar.gz "https://github.com/PowerDNS/pdns/archive/auth-${powerdns_version}.tar.gz"
+RUN curl -L -o /tmp/powerdns.tar.gz "https://github.com/PowerDNS/pdns/archive/auth-${BUILDER_VERSION}.tar.gz"
 # unarchive source codes
 RUN mkdir -p /usr/src
 WORKDIR /usr/src
 RUN tar -zxf /tmp/powerdns.tar.gz
-WORKDIR /usr/src/pdns-auth-${powerdns_version}
+WORKDIR /usr/src/pdns-auth-${BUILDER_VERSION}
 
 # Reuse same cli arguments as the nginx:alpine image used to build
 RUN autoreconf -vi && \
