@@ -28,7 +28,7 @@ WORKDIR /
 FROM alpine:latest
 
 # install pdns-backend-mysql first, its cause isntall pdns by dependency.
-RUN apk add pdns-backend-mysql libcurl
+RUN apk add pdns-backend-mysql libcurl lua5.1-libs
 
 # and then override new pdns from builder.
 RUN mkdir -p /usr/lib/pdns/pdns
