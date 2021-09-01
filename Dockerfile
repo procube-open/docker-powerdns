@@ -1,6 +1,6 @@
 FROM alpine:latest AS builder
 
-ENV BUILDER_VERSION 4.2.1
+ENV BUILDER_VERSION 4.5.1
 
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
 RUN apk add --no-cache --virtual .build-deps \
@@ -18,7 +18,7 @@ WORKDIR /usr/src/pdns-auth-${BUILDER_VERSION}
 RUN autoreconf -vi && \
     ./configure --prefix=/usr --sysconfdir=/etc/pdns --mandir=/usr/share/man --infodir=/usr/share/info \
         --localstatedir=/var --libdir=/usr/lib/pdns --with-modules= \
-        --with-dynmodules='bind geoip ldap lua mydns gmysql godbc pipe gpgsql random remote gsqlite3' \
+        --with-dynmodules='bind geoip ldap lua2 gmysql godbc pipe gpgsql random remote gsqlite3' \
         --enable-lua-records --enable-tools --enable-unit-tests --disable-static CC=gcc \
         CFLAGS='-Os -fomit-frame-pointer' LDFLAGS=-'Wl,--as-needed' CPPFLAGS='-Os -fomit-frame-pointer' \
         CXXFLAGS='-Os -fomit-frame-pointer' && \
