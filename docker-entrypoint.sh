@@ -54,7 +54,7 @@ env | grep '^PDNSCONF_' | while read varname
 do
 	varname=${varname/=*/}
 	paramname=$(echo ${varname/PDNSCONF_/} | tr '[:upper:]_' '[:lower:]-')
-  sed -r -i "s/^[# ]*${paramname}=.*\$/${paramname}=$(eval echo \$$varname)/g" /etc/pdns/pdns.conf
+  sed -r -i "s/^[# ]*${paramname}=.*\$/${paramname}=$(eval echo \$$varname | sed 's/\//\\\//g')/g" /etc/pdns/pdns.conf
 done
 
 exec "$@"
