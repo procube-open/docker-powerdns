@@ -1,11 +1,12 @@
 FROM alpine:latest AS builder
 
-ENV BUILDER_VERSION 4.5.1
+ENV BUILDER_VERSION 4.6.2
+ENV LUA_VERSION lua5.3
 
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
 RUN apk add --no-cache --virtual .build-deps \
   g++ make mariadb-dev postgresql-dev sqlite-dev curl boost-dev autoconf automake libtool curl-dev file \
-  bison flex ragel yaml-cpp yaml-cpp-dev openldap-dev krb5-dev lua-dev unixodbc-dev git py-virtualenv
+  bison flex ragel yaml-cpp yaml-cpp-dev openldap-dev krb5-dev ${LUA_VERSION}-dev unixodbc-dev git py-virtualenv
 # Download sources
 RUN curl -L -o /tmp/powerdns.tar.gz "https://github.com/PowerDNS/pdns/archive/auth-${BUILDER_VERSION}.tar.gz"
 # unarchive source codes
@@ -17,8 +18,8 @@ WORKDIR /usr/src/pdns-auth-${BUILDER_VERSION}
 # Reuse same cli arguments as the nginx:alpine image used to build
 RUN autoreconf -vi && \
     ./configure --prefix=/usr --sysconfdir=/etc/pdns --mandir=/usr/share/man --infodir=/usr/share/info \
-        --localstatedir=/var --libdir=/usr/lib/pdns --with-modules= \
-        --with-dynmodules='bind geoip ldap lua2 gmysql godbc pipe gpgsql random remote gsqlite3' \
+        --localstatedir=/var --libdir=/usr/lib/pdns --with-modules= --with-lua=${LUA_VERSION} \
+        --with-dynmodules='bind geoip gmysql godbc gpgsql gsqlite3 ldap lua2 pipe remote' \
         --enable-lua-records --enable-tools --enable-unit-tests --disable-static CC=gcc \
         CFLAGS='-Os -fomit-frame-pointer' LDFLAGS=-'Wl,--as-needed' CPPFLAGS='-Os -fomit-frame-pointer' \
         CXXFLAGS='-Os -fomit-frame-pointer' && \
@@ -26,9 +27,10 @@ RUN autoreconf -vi && \
 WORKDIR /
 
 FROM alpine:latest
+ENV LUA_VERSION lua5.3
 
 # install pdns-backend-mysql first, its cause isntall pdns by dependency.
-RUN apk add pdns-backend-mysql libcurl lua5.1-libs
+RUN apk add pdns-backend-mysql libcurl ${LUA_VERSION}-libs
 
 # and then override new pdns from builder.
 RUN mkdir -p /usr/lib/pdns/pdns
